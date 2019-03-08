@@ -1,0 +1,43 @@
+import gspread
+import re
+from oauth2client.service_account import ServiceAccountCredentials
+
+# use creds to create a client to interact with the Google Drive API
+scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
+client = gspread.authorize(creds)
+
+# Find a workbook by name and open the first sheet
+worksheet = client.open("VEEP 2017-2018 Application (Responses)").sheet1
+
+# Extract all of the values
+Name = worksheet.col_values(2)
+Email = worksheet.col_values(5)
+Discipline = worksheet.col_values(3)
+Year = worksheet.col_values(4)
+Phone = worksheet.col_values(6)
+Projects = worksheet.col_values(9)
+Interview_Offer = worksheet.col_values(18)
+
+#Have to change based on where models.py is saved
+from website.models import Students
+for i in range(0, len(Name)):
+
+    #This is a lazy workaround since most entries do not have an interview offer
+    if i > 11:
+        x = 11
+    else:
+        x = i
+
+    #Normalizing the phone numbers
+    match = re.search(r"^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$", Phone[i])
+    
+    if match:
+        phone = match.groups()[0] + match.groups()[1] + match.groups()[2]
+    else:
+        phone = Phone[i]
+
+    s[i] = Student(studet_id = i, name = Name[i], email = Email[i],
+    discipline = Discipline[i], year = Year[i], phone = Phone[i])
+
+    s[i].save
