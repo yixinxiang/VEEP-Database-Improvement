@@ -12,4 +12,17 @@ class Students(models.Models):
 
 class Projects(models.Models):
     project_name = models.CharField(max_length=200, primary_key = TRUE)
-    not_for_profit_name = models.CharField(max_length=200)
+    not_for_profit_name = models.ForeignKey(notForProfit, on_delete=models.CASCADE)
+
+class notForProfit(models.Models):
+    not_for_profit_name.CharField(max_length=200, primary_key = TRUE)
+    email = models.CharField(max_length=200)
+    project_name = models.ForeignKey(Projects, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (('not_for_profit_name', 'project_name'),)
+
+class Teams(models.Models):
+    team_member_id = models.IntegerField(primary_key = TRUE)
+    project_name = models.ForeignKey(Projects, on_delete = CASCADE)
+    student_id = models.ForeignKey(Students, on_delete = CASCADE)
